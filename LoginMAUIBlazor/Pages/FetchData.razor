@@ -1,0 +1,57 @@
+﻿@*@page "/fetchdata"*@
+@page "/fetchdata/{JWT}"
+
+@using LoginMAUIBlazor.Data
+@using LoginMAUIBlazor.Models
+@using Syncfusion.Blazor.Grids
+@using System
+
+@inject WeatherForecastService ForecastService
+@layout MainLayout
+
+<h1>Weather forecast</h1>
+
+@if (GridData == null)
+{
+	<p><em>Loading... @JWT</em></p>
+}
+else
+{
+	<div class="col-lg-12 control-section">
+    <div class="content-wrapper">
+        <div class="row">
+             <div id="container">
+                <SfGrid DataSource="@GridData" AllowPaging="true">
+                    <GridPageSettings PageCount="10"></GridPageSettings>
+                    <GridColumns>
+                        <GridColumn Field=@nameof(Weather.date) HeaderText="Fecha"  Format="d" Type="ColumnType.Date"  Width="150"></GridColumn>
+                        <GridColumn Field=@nameof(Weather.temperatureC) HeaderText="Temp. (C)" Width="150"></GridColumn>
+                        <GridColumn Field=@nameof(Weather.temperatureF) HeaderText="Temp (F)"  Width="150"></GridColumn>
+                        <GridColumn Field=@nameof(Weather.summary) HeaderText="Tipo Clima" Width="150"></GridColumn>
+                    </GridColumns>
+                </SfGrid>
+            </div>
+        </div>
+        </div>
+	</div>
+}
+
+@code {
+
+	[Parameter]
+	public string JWT { get; set; }
+	Services.WeatherService service;
+
+	public List<Weather>  GridData  { get; set; }
+	
+
+	protected override async Task OnInitializedAsync()
+	{
+		service = new Services.WeatherService();
+		GridData  = await service.GetWeathers(JWT);
+
+	}
+
+
+
+}
